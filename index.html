@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity WebGL Player | New Unity Project</title>
+  </head>
+  <body style="text-align: center">
+    <canvas id="unity-canvas" style="width: 960px; height: 600px; background: #231F20"></canvas>
+    <script src="Build/86ee4c9f8e70cd7c5629812f28291898.js"></script>
+    <script>
+      createUnityInstance(document.querySelector("#unity-canvas"), {
+        dataUrl: "Build/0fd3bbec58afaee3a4ad4a2360e23d31.data",
+        frameworkUrl: "Build/e4aa27a51d7dbd06749334ff05ca13ab.js",
+        codeUrl: "Build/f76da119af78eac6ac9b8be50f29fb81.wasm",
+        symbolsUrl: "Build/aa7922bdecaae4c1c598e1fbef061f41.json",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "DefaultCompany",
+        productName: "New Unity Project",
+        productVersion: "0.1",
+      });
+    </script>
+  </body>
+</html>
