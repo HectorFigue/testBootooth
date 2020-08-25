@@ -3,22 +3,91 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | New Unity Project</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>New Unity Project</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
   </head>
-  <body style="text-align: center">
-    <canvas id="unity-canvas" style="width: 960px; height: 600px; background: #231F20"></canvas>
-    <script src="Build/86ee4c9f8e70cd7c5629812f28291898.js"></script>
+  <body class="dark">
+    <div id="unity-container" class="unity-desktop">
+      <canvas id="unity-canvas"></canvas>
+    </div>
+    <div id="loading-cover" style="display:none;">
+      <div id="unity-loading-bar">
+        <div id="unity-logo"><img src="logo.png"></div>
+        <div id="unity-progress-bar-empty" style="display: none;">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+        <div class="spinner"></div>
+      </div>
+    </div>
+    <div id="unity-fullscreen-button" style="display: none;"></div>
     <script>
-      createUnityInstance(document.querySelector("#unity-canvas"), {
-        dataUrl: "Build/0fd3bbec58afaee3a4ad4a2360e23d31.data",
-        frameworkUrl: "Build/e4aa27a51d7dbd06749334ff05ca13ab.js",
-        codeUrl: "Build/f76da119af78eac6ac9b8be50f29fb81.wasm",
-        symbolsUrl: "Build/aa7922bdecaae4c1c598e1fbef061f41.json",
+      const hideFullScreenButton = "";
+      const buildUrl = "Build";
+      const loaderUrl = buildUrl + "/86ee4c9f8e70cd7c5629812f28291898.js";
+      const config = {
+        dataUrl: buildUrl + "/4ccfb8ea65cd97ae3a1c89126a664ce6.data",
+        frameworkUrl: buildUrl + "/e4aa27a51d7dbd06749334ff05ca13ab.js",
+        codeUrl: buildUrl + "/f76da119af78eac6ac9b8be50f29fb81.wasm",
+        symbolsUrl: buildUrl + "/aa7922bdecaae4c1c598e1fbef061f41.json",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "New Unity Project",
         productVersion: "0.1",
-      });
+      };
+
+      const container = document.querySelector("#unity-container");
+      const canvas = document.querySelector("#unity-canvas");
+      const loadingCover = document.querySelector("#loading-cover");
+      const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
+      const progressBarFull = document.querySelector("#unity-progress-bar-full");
+      const fullscreenButton = document.querySelector("#unity-fullscreen-button");
+      const spinner = document.querySelector('.spinner');
+
+      const canFullscreen = (function() {
+        for (const key of [
+            'exitFullscreen',
+            'webkitExitFullscreen',
+            'webkitCancelFullScreen',
+            'mozCancelFullScreen',
+            'msExitFullscreen',
+          ]) {
+          if (key in document) {
+            return true;
+          }
+        }
+        return false;
+      }());
+
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        container.className = "unity-mobile";
+        config.devicePixelRatio = 1;
+      }
+      loadingCover.style.display = "";
+
+      const script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          spinner.style.display = "none";
+          progressBarEmpty.style.display = "";
+          progressBarFull.style.width = `${100 * progress}%`;
+        }).then((unityInstance) => {
+          loadingCover.style.display = "none";
+          if (canFullscreen) {
+            if (!hideFullScreenButton) {
+              fullscreenButton.style.display = "";
+            }
+            fullscreenButton.onclick = () => {
+              unityInstance.SetFullscreen(1);
+            };
+          }
+        }).catch((message) => {
+          alert(message);
+        });
+      };
+      document.body.appendChild(script);
     </script>
   </body>
 </html>
